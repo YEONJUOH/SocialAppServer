@@ -6,7 +6,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
+var audioService = require('./routes/audioService');
+var memberService= require('./routes/memberService');
+var replyService = require('./routes/replyServcie');
 
 var app = express();
 
