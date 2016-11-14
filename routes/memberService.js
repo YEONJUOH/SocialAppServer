@@ -50,6 +50,52 @@ memberService.post('/login',function(req,res,next){
 
 })
 
+/*회원정보 수정*/
+memberService.post('/update',function(req,res,next){
+
+
+    var data = [req.body['m_name'],req.body['password'],req.body['m_id']];
+
+    pool.getConnection(function (err,con) {
+        con.query('update member set m_name=?,password=? where m_id =?',data,function (err,result) {
+            if(!err) {
+                res.send(JSON.stringify(succeess));
+            }else{
+                res.send(JSON.stringify(fail));
+                console.log(err);
+            }
+            con.release();
+        })
+    })
+
+
+})
+
+/*회원 정보 조회*/
+memberService.post('/memberInfo',function(req,res,next){
+
+
+    var data = [req.body['m_id']];
+
+    pool.getConnection(function (err,con) {
+        con.query('update member set m_name=?,password=? where m_id =?',data,function (err,result) {
+            if(!err) {
+                res.send(JSON.stringify(succeess));
+            }else{
+                res.send(JSON.stringify(fail));
+                console.log(err);
+            }
+            con.release();
+        })
+    })
+
+
+})
+
+
+
+
+
 
 
 module.exports = memberService;
