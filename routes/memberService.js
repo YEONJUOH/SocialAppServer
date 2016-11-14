@@ -31,6 +31,24 @@ memberService.post('/join',function(req,res,next){
 
 
 /*로그인*/
+memberService.post('/login',function(req,res,next){
+
+
+    var data = [req.body['m_id'],req.body['password']];
+
+    pool.getConnection(function (err,con) {
+        con.query('select * from member where m_id =? and password =?',data,function (err,result) {
+            if(!err) {
+                res.send(JSON.stringify(succeess));
+            }else{
+                res.send(JSON.stringify(fail));
+            }
+            con.release();
+        })
+    })
+
+
+})
 
 
 
