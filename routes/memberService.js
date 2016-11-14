@@ -75,12 +75,12 @@ memberService.post('/update',function(req,res,next){
 memberService.post('/memberInfo',function(req,res,next){
 
 
-    var data = [req.body['m_id']];
+    var data = req.body['m_id'];
 
     pool.getConnection(function (err,con) {
-        con.query('update member set m_name=?,password=? where m_id =?',data,function (err,result) {
+        con.query('select m.m_id as m_id, m_name, count(a.a_id) as audio_nm , avg(score) as score_avg from member m,  upload a , audio_score a_sc where m.m_id = ? and m.m_id = a.m_id and a.a_id = a_sc.a_id',data,function (err,result) {
             if(!err) {
-                res.send(JSON.stringify(succeess));
+                res.send(JSON.stringify(result[0]));
             }else{
                 res.send(JSON.stringify(fail));
                 console.log(err);
@@ -91,6 +91,8 @@ memberService.post('/memberInfo',function(req,res,next){
 
 
 })
+
+/**/
 
 
 
