@@ -35,7 +35,7 @@ memberService.post('/login',function(req,res,next){
     pool.getConnection(function (err,con) {
         con.query('select * from member where m_id =? and password =?',data,function (err,result) {
             if(!err) {
-                res.send(JSON.stringify(succeess));
+                res.send(JSON.stringify(success));
             }else{
                 res.send(JSON.stringify(fail));
             }
