@@ -1,13 +1,9 @@
 var express = require('express');
 var memberService = express.Router();
 var pool = require('../public/javascripts/pool.js');
-var succeess= {result:'success'};
+var success= {result:'success'};
 var fail ={result:'fail'};
 
-/* GET home page. */
-memberService.get('/', function(req, res, next) {
-    res.render('index', { title: 'Express' });
-});
 
 /*회원 가입*/
 memberService.post('/join',function(req,res,next){
@@ -18,7 +14,7 @@ memberService.post('/join',function(req,res,next){
     pool.getConnection(function (err,con) {
         con.query('insert into member (m_id,password,m_name) values (?,?,?)',data,function (err,result) {
             if(!err) {
-                res.send(JSON.stringify(succeess));
+                res.send(JSON.stringify(success));
             }else{
                 res.send(JSON.stringify(fail));
             }
