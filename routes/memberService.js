@@ -37,12 +37,13 @@ memberService.post('/login',function(req,res,next){
     pool.getConnection(function (err,con) {
         con.query('select * from member where m_id =? and password =?',data,function (err,result) {
             if(!err) {
+                console.log("로그인 성공");
                 res.sendStatus(200);
-                res.send(JSON.stringify(success));
-                res.end();
+               // res.send(JSON.stringify(success));
+                //res.end();
             }else{
                 res.send(JSON.stringify(fail));
-                res.end();
+              //  res.end();
             }
             con.release();
         })
