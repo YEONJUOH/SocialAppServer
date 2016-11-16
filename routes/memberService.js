@@ -14,6 +14,7 @@ memberService.post('/join',function(req,res,next){
     pool.getConnection(function (err,con) {
         con.query('insert into member (m_id,password,m_name) values (?,?,?)',data,function (err,result) {
             if(!err) {
+                res.sendStatus(200);
                 res.send(JSON.stringify(success));
             }else{
                 res.send(JSON.stringify(fail));
