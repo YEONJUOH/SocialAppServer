@@ -16,6 +16,7 @@ memberService.post('/join',function(req,res,next){
             if(!err) {
                 res.sendStatus(200);
                 res.send(JSON.stringify(success));
+
             }else{
                 res.send(JSON.stringify(fail));
             }
@@ -38,8 +39,10 @@ memberService.post('/login',function(req,res,next){
             if(!err) {
                 res.sendStatus(200);
                 res.send(JSON.stringify(success));
+                res.end();
             }else{
                 res.send(JSON.stringify(fail));
+                res.end();
             }
             con.release();
         })
