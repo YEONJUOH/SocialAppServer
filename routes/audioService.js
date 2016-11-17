@@ -61,6 +61,27 @@ audioService.get('/audio_info', function(req, res, next) {
     })
 });
 
+/*play_audio*/
+audioService.post('/play_audio',function (req,res,next) {
+
+    var data = [req.body['m_id'],req.body['a_id']];
+     pool.getConnection(function (err,con) {
+        con.query('insert into play_audio (play_date,m_id,a_id) values (now(),?,?)',data,function (err,result) {
+            if(!err) {
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(success);
+            }else{
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(fail);
+
+            }
+            con.release();
+        })
+    })
+
+})
+
+
 
 audioService.post('/score_audio', function(req, res, next) {
 
