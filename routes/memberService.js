@@ -14,11 +14,12 @@ memberService.post('/join',function(req,res,next){
     pool.getConnection(function (err,con) {
         con.query('insert into member (m_id,password,m_name) values (?,?,?)',data,function (err,result) {
             if(!err) {
-                res.sendStatus(200);
-                res.send(JSON.stringify(success));
+
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(success);
 
             }else{
-                res.send(JSON.stringify(fail));
+                res.send(fail);
             }
             con.release();
         })
@@ -40,6 +41,7 @@ memberService.post('/login',function(req,res,next){
                var nm = result[0].nm;
 
                 if(nm>=1) {
+
                     res.header("Content-Type", "application/json; charset=utf-8");
                     res.send(success);
                 }else{
@@ -68,9 +70,11 @@ memberService.post('/update',function(req,res,next){
     pool.getConnection(function (err,con) {
         con.query('update member set m_name=?,password=? where m_id =?',data,function (err,result) {
             if(!err) {
-                res.send(JSON.stringify(succeess));
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(success);
             }else{
-                res.send(JSON.stringify(fail));
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(fail);
                 console.log(err);
             }
             con.release();
@@ -89,9 +93,11 @@ memberService.post('/memberInfo',function(req,res,next){
     pool.getConnection(function (err,con) {
         con.query('select m.m_id as m_id, m_name, count(a.a_id) as audio_nm , avg(score) as score_avg from member m,  upload a , audio_score a_sc where m.m_id = ? and m.m_id = a.m_id and a.a_id = a_sc.a_id',data,function (err,result) {
             if(!err) {
-                res.send(JSON.stringify(result[0]));
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(result[0]);
             }else{
-                res.send(JSON.stringify(fail));
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(fail);
                 console.log(err);
             }
             con.release();

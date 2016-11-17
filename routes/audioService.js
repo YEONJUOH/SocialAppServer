@@ -22,17 +22,19 @@ audioService.post('/upload',function(req,res,next){
                 a_id = result.insertId;
                 con.query('insert into upload (a_id,m_id,ul_date) values (?,?,now())',[a_id,data2],function (err,result) {
                     if(!err) {
-
-                        res.send(JSON.stringify(success));
+                        res.header("Content-Type", "application/json; charset=utf-8");
+                        res.send(success);
 
                     }else{
-                        res.send(JSON.stringify(fail));
+                        res.header("Content-Type", "application/json; charset=utf-8");
+                        res.send(fail);
                     }
-                    //con.release();
+
                 })
 
             }else{
-                res.send(JSON.stringify(fail));
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(fail);
             }
             con.release();
         })
@@ -47,9 +49,11 @@ audioService.get('/audio_info', function(req, res, next) {
     pool.getConnection(function (err,con) {
         con.query('select * from audio where a_id =?',data,function (err,result) {
             if(!err) {
-                res.send(JSON.stringify(result[0]));
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(result[0]);
             }else{
-                res.send(JSON.stringify(fail));
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(fail);
                 console.log(err);
             }
             con.release();
@@ -66,9 +70,11 @@ audioService.post('/score_audio', function(req, res, next) {
     pool.getConnection(function (err,con) {
         con.query('insert into audio_score(m_id,a_id,score) values (?,?,?)',data,function (err,result) {
             if(!err) {
-                res.send(JSON.stringify(success));
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(success);
             }else{
-                res.send(JSON.stringify(fail));
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(fail);
 
             }
             con.release();
@@ -80,7 +86,7 @@ audioService.post('/score_audio', function(req, res, next) {
 audioService.get('/delete_audio', function(req, res, next) {
 
     var data = req.query.a_id;
-    console.log("data"+data);
+
 
     pool.getConnection(function (err,con) {
         con.beginTransaction(function (err) {
