@@ -134,6 +134,64 @@ audioService.get('/delete_audio', function(req, res, next) {
 
 });
 
+/*list_day*/
+audioService.get('/list_day', function(req, res, next) {
+
+    pool.getConnection(function (err,con) {
+        con.query('select s_loc,up.m_id as m_id, avg(a_sc.score) as score,a.a_id as a_id from (select *,count(*) as nm from play_audio where play_date = now() group by a_id) t, audio a, song s, audio_score a_sc, upload up where t.a_id = a.a_id and a.s_id = s.s_id and a.a_id = a_sc.a_id and a.a_id = up.a_id order by score',function (err,result) {
+            if(!err) {
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(result);
+            }else{
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(fail);
+
+            }
+            con.release();
+        })
+    })
+
+});
+
+
+/*list_week*/
+audioService.get('/list_week', function(req, res, next) {
+
+    pool.getConnection(function (err,con) {
+        con.query('SELECT s_loc,up.m_id as m_id, avg(a_sc.score) as score,a.a_id as a_id from (SELECT DATE_SUB(now(), INTERVAL(DAYOFWEEK(now()) - 1) DAY)  as t ) week_Start, audio a, song s, audio_score a_sc, upload up where a_date >  DATE_ADD(t, INTERVAL 1 DAY) and a_date < DATE_ADD(t, INTERVAL 8 DAY) and a.s_id = s.s_id and a.a_id = a_sc.a_id and a.a_id = up.a_id order by score',function (err,result) {
+                if(!err) {
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(result);
+            }else{
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(fail);
+
+            }
+            con.release();
+        })
+    })
+
+});
+
+/*list_mon*/
+audioService.get('/list_mon', function(req, res, next) {
+
+    pool.getConnection(function (err,con) {
+        con.query('select s_loc,up.m_id as m_id, avg(a_sc.score) as score,a.a_id as a_id from audio a, song s, audio_score a_sc, upload up where substring(now(),1,7) = substring(a_date,1,7) and a.s_id = s.s_id and a.a_id = a_sc.a_id and a.a_id = up.a_id order by score',function (err,result) {
+            if(!err) {
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(result);
+            }else{
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(fail);
+
+            }
+            con.release();
+        })
+    })
+
+});
+
 
 module.exports = audioService;
 
