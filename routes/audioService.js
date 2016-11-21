@@ -47,7 +47,7 @@ audioService.get('/audio_info', function(req, res, next) {
     console.log("data"+data);
 
     pool.getConnection(function (err,con) {
-        con.query('select * from audio where a_id =?',data,function (err,result) {
+        con.query('select s_loc, s.s_id as s_id, m_id, a_name,a_loc,a_comment,a_date from audio a, upload up , song s where a.s_id = s.s_id and up.a_id = a.a_id and a.a_id = ?',data,function (err,result) {
             if(!err) {
                 res.header("Content-Type", "application/json; charset=utf-8");
                 res.send(result[0]);
@@ -104,6 +104,9 @@ audioService.post('/score_audio', function(req, res, next) {
 
 });
 
+
+
+//트랜젹션 적용 대상 : audio_score, play_audio, reply, upload
 audioService.get('/delete_audio', function(req, res, next) {
 
     var data = req.query.a_id;
@@ -118,6 +121,7 @@ audioService.get('/delete_audio', function(req, res, next) {
                 throw err;
             }
 
+            //audio_score
             con.query('delete from audio_score where a_id = ?',data,function (err,result) {
                 if(err){
                     con.rollback(function () {
@@ -126,7 +130,66 @@ audioService.get('/delete_audio', function(req, res, next) {
                     })
                 }
 
-                console.log(result);
+                //play_audio
+                con.query('delete from play_audio where a_id = ?',data,function (err,result) {
+
+                    if(err){
+                        con.rollback(function () {
+                            console.log(err);
+                            throw err;
+                        })
+                    }
+
+                    //reply
+                    con.query('delete from reply where a_id = ?',data,function (err,result) {
+
+                        if(err){
+                            con.rollback(function () {
+                                console.log(err);
+                                throw err;
+                            })
+                        }
+
+                        //upload
+                        con.query('delete from upload where a_id = ?',data,function (err,result) {
+
+                            if(err){
+                                con.rollback(function () {
+                                    console.log(err);
+                                    throw err;
+                                })
+                            }
+
+                            con.query('delete from audio where a_id = ?',data,function (err,result) {
+
+                                if(err){
+                                    con.rollback(function () {
+                                        console.log(err);
+                                        throw err;
+                                    })
+                                }
+
+
+                                con.commit(function (err) {
+                                    if (err) {
+                                        console.error(err);
+                                        con.rollback(function () {
+                                            console.error('rollback error');
+                                            throw err;
+                                        });
+                                    }// if err
+                                    res.header("Content-Type", "application/json; charset=utf-8");
+                                    res.send(success);
+
+                                    con.release();
+
+                                });// commit
+
+                            })
+                        })
+
+                    })
+                })
 
             })
         })
