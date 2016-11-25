@@ -105,10 +105,19 @@ memberService.post('/memberInfo',function(req,res,next){
     })
 
 
+});
+
+/*test*/
+
+memberService.post('/imgtest',function(req,res,next){
+     console.log("imgtest");
+
+    var data = req.body['imgFile'];
+
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send("success");
+
 })
-
-/**/
-
 
 
 
