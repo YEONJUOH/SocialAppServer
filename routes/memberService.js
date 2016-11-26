@@ -3,7 +3,13 @@ var memberService = express.Router();
 var pool = require('../public/javascripts/pool.js');
 var success= {result:'success'};
 var fail ={result:'fail'};
-
+var dir_path =  __dirname+"";
+var imgPath = dir_path.replace("routes","img_dir")
+var Q = require("q");
+var multer = require("multer");
+var formidable = require("formidable");
+var fs = require("fs-extra");
+var util = require('util');
 
 /*회원 가입*/
 memberService.post('/join',function(req,res,next){
@@ -110,18 +116,83 @@ memberService.post('/memberInfo',function(req,res,next){
 /*test*/
 
 memberService.post('/imgtest',function(req,res,next){
-     console.log("imgtest");
+     console.log("짜증"+imgPath);
 
-    var data = req.body['imgFile'];
+    /*upload(req, res).then(function (file) {
+        res.json(file);
+    }, function (err) {
+        res.send(500, err);
+    });*/
 
-                res.header("Content-Type", "application/json; charset=utf-8");
-                res.send("success");
+    var form = new formidable.IncomingForm();
+    var file_nm ;
+    form.parse(req, function(err, fields, files) {
+        file_nm = fields.m_id;
+
+        res.writeHead(200, {'content-type': 'text/plain'});
+        res.write('received upload:\n\n');
+        res.end(util.inspect({fields: fields, files: files}));
+    });
+
+    form.on('end', function(fields, files) {
+        /* Temporary location of our uploaded file */
+        var temp_path = this.openedFiles[0].path;
+        /* The file name of the uploaded file */
+        var filetype = getFileType(this.openedFiles[0].name);
+
+        var file_name = file_nm + "."+filetype;
+        /* Location where we want to copy the uploaded file */
+        var new_location = imgPath+"\\";
+
+         console.log("tmp_path"+temp_path);
+
+        fs.copy(temp_path, new_location +  file_name, function(err) {
+            if (err) {
+                console.error(err);
+            } else {
+                console.log("success!")
+            }
+        });
+    });
+
 
 })
 
+var upload = function (req, res) {
+    var name = req.body.m_id;
+    console.log(name);
+    var deferred = Q.defer();
+    var storage = multer.diskStorage({
+        // 서버에 저장할 폴더
+        destination: function (req, file, cb) {
+            cb(null, imgPath);
+        },
+
+        // 서버에 저장할 파일 명
+        filename: function (req, file, cb) {
+            file.uploadedFile = {
+                name: name,
+                ext: file.mimetype.split('/')[1]
+            };
+            cb(null, file.uploadedFile.name + '.' + file.uploadedFile.ext);
+        }
+    });
+
+    var upload = multer({ storage: storage }).single('file');
+    upload(req, res, function (err) {
+        if (err) deferred.reject();
+        else deferred.resolve(req.file.uploadedFile);
+    });
+    return deferred.promise;
+};
 
 
+var getFileType = function(obj){
 
+    var pathpoint = obj.lastIndexOf('.');
+    return obj.substring(pathpoint+1,obj.length);
+
+};
 
 
 module.exports = memberService;

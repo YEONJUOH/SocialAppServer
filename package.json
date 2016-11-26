@@ -13,6 +13,10 @@
     "jade": "~1.11.0",
     "morgan": "~1.7.0",
     "serve-favicon": "~2.3.0",
-    "mysql" : "*"
+    "mysql" : "*",
+    "multer" :"*",
+    "q" :"*",
+    "formidable" : "*",
+    "fs-extra" : "*"
   }
 }
