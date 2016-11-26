@@ -1,15 +1,14 @@
 var express = require('express');
 var memberService = express.Router();
 var pool = require('../public/javascripts/pool.js');
+var formidable = require("formidable");
+var fs = require("fs-extra");
+var util = require('util');
+
 var success= {result:'success'};
 var fail ={result:'fail'};
 var dir_path =  __dirname+"";
 var imgPath = dir_path.replace("routes","img_dir")
-var Q = require("q");
-var multer = require("multer");
-var formidable = require("formidable");
-var fs = require("fs-extra");
-var util = require('util');
 
 /*회원 가입*/
 memberService.post('/join',function(req,res,next){
@@ -157,34 +156,6 @@ memberService.post('/imgtest',function(req,res,next){
 
 
 })
-
-var upload = function (req, res) {
-    var name = req.body.m_id;
-    console.log(name);
-    var deferred = Q.defer();
-    var storage = multer.diskStorage({
-        // 서버에 저장할 폴더
-        destination: function (req, file, cb) {
-            cb(null, imgPath);
-        },
-
-        // 서버에 저장할 파일 명
-        filename: function (req, file, cb) {
-            file.uploadedFile = {
-                name: name,
-                ext: file.mimetype.split('/')[1]
-            };
-            cb(null, file.uploadedFile.name + '.' + file.uploadedFile.ext);
-        }
-    });
-
-    var upload = multer({ storage: storage }).single('file');
-    upload(req, res, function (err) {
-        if (err) deferred.reject();
-        else deferred.resolve(req.file.uploadedFile);
-    });
-    return deferred.promise;
-};
 
 
 var getFileType = function(obj){

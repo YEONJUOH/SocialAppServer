@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
+var fs = require("fs-extra");
 
 var index = require('./routes/index');
 var audioService = require('./routes/audioService');
@@ -30,6 +31,22 @@ app.use('/member',memberService);
 app.use('/reply',replyService);
 app.use('/audio',audioService);
 
+
+// 이미지파일 호스팅 로직
+app.get('/image/:name',function (req,res){
+  var filename = req.params.name;
+  console.log(__dirname+'/img_dir/'+filename);
+  fs.exists(__dirname+'/img_dir/'+filename, function (exists) {
+    if (exists) {
+      fs.readFile(__dirname+'/img_dir/'+filename, function (err,data){
+        res.end(data);
+      });
+    } else {
+      res.end('file is not exists');
+    }
+  })
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -47,5 +64,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
 
 module.exports = app;
