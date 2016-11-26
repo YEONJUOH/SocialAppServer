@@ -27,6 +27,48 @@ replyService.post('/createRply', function(req, res, next) {
 
 });
 
+replyService.get('/deleteRply', function(req, res, next) {
+    var data = req.query.r_id;
+
+    pool.getConnection(function (err,con) {
+        con.query('delete from reply where r_id = ?',data,function (err,result) {
+            if(!err) {
+
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(success);
+
+            }else{
+                console.log(err);
+                res.send(fail);
+            }
+            con.release();
+        })
+    })
+
+
+});
+
+
+replyService.get('/replyList', function(req, res, next) {
+    var data = req.query.a_id;
+
+    pool.getConnection(function (err,con) {
+        con.query('select r_id, m.m_id as m_id, content from reply r, member m   where r.m_id = m.m_id and r.a_id = ?',data,function (err,result) {
+            if(!err) {
+
+                res.header("Content-Type", "application/json; charset=utf-8");
+                res.send(success);
+
+            }else{
+                console.log(err);
+                res.send(fail);
+            }
+            con.release();
+        })
+    })
+
+
+});
 
 
 
