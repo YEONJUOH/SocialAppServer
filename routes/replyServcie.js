@@ -57,7 +57,7 @@ replyService.get('/replyList', function(req, res, next) {
             if(!err) {
 
                 res.header("Content-Type", "application/json; charset=utf-8");
-                res.send(success);
+                res.send(result);
 
             }else{
                 console.log(err);
