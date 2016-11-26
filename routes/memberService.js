@@ -10,29 +10,6 @@ var fail ={result:'fail'};
 var dir_path =  __dirname+"";
 var imgPath = dir_path.replace("routes","img_dir")
 
-/*회원 가입*/
-memberService.post('/join',function(req,res,next){
-
-
-  var data = [req.body['m_id'],req.body['password'],req.body['m_name']];
-
-    pool.getConnection(function (err,con) {
-        con.query('insert into member (m_id,password,m_name) values (?,?,?)',data,function (err,result) {
-            if(!err) {
-
-                res.header("Content-Type", "application/json; charset=utf-8");
-                res.send(success);
-
-            }else{
-                res.send(fail);
-            }
-            con.release();
-        })
-    })
-
-
-})
-
 
 /*로그인*/
 memberService.post('/login',function(req,res,next){
@@ -93,6 +70,7 @@ memberService.post('/update',function(req,res,next){
 memberService.post('/memberInfo',function(req,res,next){
 
 
+
     var data = req.body['m_id'];
 
     pool.getConnection(function (err,con) {
@@ -112,25 +90,20 @@ memberService.post('/memberInfo',function(req,res,next){
 
 });
 
-/*test*/
+/*join*/
+memberService.post('/join',function(req,res,next){
 
-memberService.post('/imgtest',function(req,res,next){
-     console.log("짜증"+imgPath);
-
-    /*upload(req, res).then(function (file) {
-        res.json(file);
-    }, function (err) {
-        res.send(500, err);
-    });*/
+   // [req.body['m_id'],req.body['password'],req.body['m_name']];
+    var data ;
 
     var form = new formidable.IncomingForm();
     var file_nm ;
     form.parse(req, function(err, fields, files) {
         file_nm = fields.m_id;
-
-        res.writeHead(200, {'content-type': 'text/plain'});
-        res.write('received upload:\n\n');
-        res.end(util.inspect({fields: fields, files: files}));
+        data = [fields.m_id,fields.password, fields.m_name];
+        //res.writeHead(200, {'content-type': 'text/plain'});
+        //res.write('received upload:\n\n');
+        //res.end(util.inspect({fields: fields, files: files}));
     });
 
     form.on('end', function(fields, files) {
@@ -138,20 +111,39 @@ memberService.post('/imgtest',function(req,res,next){
         var temp_path = this.openedFiles[0].path;
         /* The file name of the uploaded file */
         var filetype = getFileType(this.openedFiles[0].name);
-
         var file_name = file_nm + "."+filetype;
         /* Location where we want to copy the uploaded file */
-        var new_location = imgPath+"\\";
+        var new_location = imgPath+"/";
 
-         console.log("tmp_path"+temp_path);
+       data.push(new_location +  file_name);
 
-        fs.copy(temp_path, new_location +  file_name, function(err) {
-            if (err) {
-                console.error(err);
-            } else {
-                console.log("success!")
-            }
-        });
+        pool.getConnection(function (err,con) {
+            con.query('insert into member (m_id,password,m_name,m_loc) values (?,?,?,?)',data,function (err,result) {
+                if(!err) {
+
+                    //파일 생성
+                    fs.copy(temp_path, new_location +  file_name, function(err) {
+                        if (err) {
+                            console.error(err);
+                        } else {
+
+                            res.header("Content-Type", "application/json; charset=utf-8");
+                            res.send(success);
+
+                            console.log("success!")
+                        }
+                    });
+
+
+
+                }else{
+                    res.send(fail);
+                }
+                con.release();
+            })
+        })
+
+
     });
 
 
