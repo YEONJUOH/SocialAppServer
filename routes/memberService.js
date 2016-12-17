@@ -93,11 +93,7 @@ memberService.post('/memberInfo',function(req,res,next){
 /*join*/
 memberService.post('/join',function(req,res,next){
 
-    <<<<<<< HEAD
-    // [req.body['m_id'],req.body['password'],req.body['m_name']];
-    =======
-    // [req.body['m_id'],req.body['password'],req.body['m_name']];
-    >>>>>>> origin/master
+
     var data ;
 
     var form = new formidable.IncomingForm();
@@ -119,11 +115,8 @@ memberService.post('/join',function(req,res,next){
         /* Location where we want to copy the uploaded file */
         var new_location = imgPath+"/";
 
-        <<<<<<< HEAD
         data.push(new_location +  file_name);
-        =======
-            data.push(new_location +  file_name);
-        >>>>>>> origin/master
+
 
         pool.getConnection(function (err,con) {
             con.query('insert into member (m_id,password,m_name,m_loc) values (?,?,?,?)',data,function (err,result) {

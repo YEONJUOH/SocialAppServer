@@ -267,11 +267,8 @@ audioService.get('/list_week', function(req, res, next) {
 
     pool.getConnection(function (err,con) {
         con.query('select s_loc, up.m_id as m_id, t3.a_id as a_id , t3.score as score, nm from (select a_id, avg(score) as score,nm from (select t.a_id as a_id, ifnull(a_sc.score,0) as score,nm  from (select pl.a_id as a_id, count(*) as nm from (SELECT substring(DATE_SUB(now(), INTERVAL(DAYOFWEEK(now()) - 1) DAY),1,11)  as d ) week_Start, play_audio pl   where play_date >= d and play_date <= DATE_ADD(d, INTERVAL 7 DAY) group by pl.a_id) t left outer join audio_score a_sc on t.a_id = a_sc.a_id) t2 group by a_id) t3, song s, upload up, audio a where t3.a_id = a.a_id and a.s_id = s.s_id and up.a_id = a.a_id order by nm desc',function (err,result) {
-            <<<<<<< HEAD
             if(!err) {
-            =======
-                if(!err) {
-                >>>>>>> origin/master
+
                     res.header("Content-Type", "application/json; charset=utf-8");
                     res.send(result);
                 }else{
