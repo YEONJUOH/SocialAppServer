@@ -47,6 +47,23 @@ app.get('/image/:name',function (req,res){
   })
 });
 
+//오디오 호스팅
+app.get('/audio/:name',function (req,res){
+  var filename = req.params.name;
+  console.log(__dirname+'/audio_dir/'+filename);
+  fs.exists(__dirname+'/audio_dir/'+filename, function (exists) {
+    if (exists) {
+      fs.readFile(__dirname+'/audio_dir/'+filename, function (err,data){
+        res.end(data);
+      });
+    } else {
+      res.end('file is not exists');
+    }
+  })
+});
+
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

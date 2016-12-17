@@ -20,7 +20,7 @@ memberService.post('/login',function(req,res,next){
     pool.getConnection(function (err,con) {
         con.query('select count(*) as nm from member where m_id =? and password =?',data,function (err,result) {
             if(!err) {
-               var nm = result[0].nm;
+                var nm = result[0].nm;
 
                 if(nm>=1) {
 
@@ -34,7 +34,7 @@ memberService.post('/login',function(req,res,next){
             }else{
                 res.header("Content-Type", "application/json; charset=utf-8");
                 res.send(fail);
-              //  res.end();
+                //  res.end();
             }
             con.release();
         })
@@ -64,7 +64,7 @@ memberService.post('/update',function(req,res,next){
     })
 
 
-})
+});
 
 /*회원 정보 조회*/
 memberService.post('/memberInfo',function(req,res,next){
@@ -74,7 +74,7 @@ memberService.post('/memberInfo',function(req,res,next){
     var data = req.body['m_id'];
 
     pool.getConnection(function (err,con) {
-        con.query('select m.m_id as m_id, m_name, count(a.a_id) as audio_nm , avg(score) as score_avg from member m,  upload a , audio_score a_sc where m.m_id = ? and m.m_id = a.m_id and a.a_id = a_sc.a_id',data,function (err,result) {
+        con.query('select m.m_id as m_id, m_name, m_loc,count(a.a_id) as audio_nm , avg(score) as score_avg from member m,  upload a , audio_score a_sc where m.m_id = ? and m.m_id = a.m_id and a.a_id = a_sc.a_id',data,function (err,result) {
             if(!err) {
                 res.header("Content-Type", "application/json; charset=utf-8");
                 res.send(result[0]);
@@ -93,7 +93,11 @@ memberService.post('/memberInfo',function(req,res,next){
 /*join*/
 memberService.post('/join',function(req,res,next){
 
-   // [req.body['m_id'],req.body['password'],req.body['m_name']];
+    <<<<<<< HEAD
+    // [req.body['m_id'],req.body['password'],req.body['m_name']];
+    =======
+    // [req.body['m_id'],req.body['password'],req.body['m_name']];
+    >>>>>>> origin/master
     var data ;
 
     var form = new formidable.IncomingForm();
@@ -115,7 +119,11 @@ memberService.post('/join',function(req,res,next){
         /* Location where we want to copy the uploaded file */
         var new_location = imgPath+"/";
 
-       data.push(new_location +  file_name);
+        <<<<<<< HEAD
+        data.push(new_location +  file_name);
+        =======
+            data.push(new_location +  file_name);
+        >>>>>>> origin/master
 
         pool.getConnection(function (err,con) {
             con.query('insert into member (m_id,password,m_name,m_loc) values (?,?,?,?)',data,function (err,result) {
@@ -148,6 +156,15 @@ memberService.post('/join',function(req,res,next){
 
 
 })
+
+
+var getFileType = function(obj){
+
+    var pathpoint = obj.lastIndexOf('.');
+    return obj.substring(pathpoint+1,obj.length);
+
+};
+
 
 
 var getFileType = function(obj){
